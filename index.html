@@ -1,0 +1,1047 @@
+﻿<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#ffd36a" />
+  <title>VIRALIX | Лидеры</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-a: #fff8df;
+      --bg-b: #e9f8ff;
+      --bg-c: #ffe9db;
+      --ink: #1c2740;
+      --muted: #50607f;
+      --line: #c8d5ee;
+      --card: #ffffffd4;
+      --card-strong: #ffffffeb;
+      --accent: #ff7a18;
+      --accent-2: #00a8cc;
+      --accent-3: #ffcf5b;
+      --good: #1f9d6c;
+      --shadow: 0 16px 42px #001f5a1f;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --max: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(960px 520px at 12% 4%, #fff3c0 0%, #fff3c000 62%),
+        radial-gradient(760px 440px at 89% 12%, #d8f3ff 0%, #d8f3ff00 67%),
+        radial-gradient(860px 460px at 76% 92%, #ffd8c6 0%, #ffd8c600 64%),
+        linear-gradient(130deg, var(--bg-a), var(--bg-b) 56%, var(--bg-c));
+      overflow-x: hidden;
+      line-height: 1.4;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -20% -15%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.52;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle at 12% 18%, #ffd15980 0 12%, #ffd15900 36%),
+        radial-gradient(circle at 86% 24%, #4fd8ff5c 0 14%, #4fd8ff00 42%),
+        radial-gradient(circle at 44% 84%, #ff8a6f50 0 18%, #ff8a6f00 45%);
+      animation: auroraMove 18s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      background:
+        linear-gradient(90deg, #ffffff00 0%, #ffffff2e 48%, #ffffff00 100%);
+      transform: translateX(-30%);
+      animation: sweep 12s linear infinite;
+    }
+
+    .spark-field {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .spark {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #ffffff, #ffffff00 72%);
+      opacity: 0;
+      animation: sparkFloat 8s linear infinite;
+    }
+
+    .app {
+      position: relative;
+      z-index: 2;
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: 8px 10px 20px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px) scale(0.98);
+      animation: revealUp 720ms cubic-bezier(.2, .72, .18, 1) forwards;
+    }
+
+    .hero {
+      background: linear-gradient(145deg, #ffffffd9, #fff6dbd6);
+      border: 1px solid #ffffff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 18px 16px;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      animation: heroBreath 6.8s ease-in-out infinite;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        conic-gradient(from 90deg at 88% 16%, #ffffff00, #ffb84a3f 16%, #ffffff00 34%),
+        conic-gradient(from 210deg at 18% 90%, #ffffff00, #57d6ff35 18%, #ffffff00 30%);
+      animation: hueOrbit 14s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #ffcb7c;
+      color: #74480f;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: #fff9e8;
+    }
+
+    h1 {
+      margin: 8px 0 0;
+      font-family: "Bebas Neue", "Impact", sans-serif;
+      font-size: clamp(46px, 8.4vw, 86px);
+      line-height: 0.96;
+      letter-spacing: 0.03em;
+      color: #172031;
+      text-wrap: balance;
+      animation: heroGlow 3.6s ease-in-out infinite;
+    }
+
+    .hero-sub {
+      margin: 10px 0 0;
+      max-width: 860px;
+      color: #394968;
+      font-size: clamp(14px, 2.2vw, 17px);
+    }
+
+    .chips {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 6px 12px;
+      border: 1px solid #d8e4f9;
+      background: #ffffffc4;
+      color: #37486a;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+    }
+
+    .chip strong {
+      color: #22304e;
+      margin-right: 6px;
+    }
+
+    .chip.strong {
+      border-color: #ffbe5f;
+      background: linear-gradient(145deg, #fff5dd, #ffeab6);
+      color: #6a4510;
+      box-shadow: inset 0 0 0 1px #ffffff96;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    .stat {
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border: 1px solid #ffffff;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+      padding: 12px 14px;
+      min-height: 86px;
+      position: relative;
+      overflow: hidden;
+      animation: statDrift 6s ease-in-out infinite;
+    }
+
+    .stat-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: #4d6289;
+    }
+
+    .stat-pill {
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid #cfdcf4;
+      background: #ffffffd8;
+      font-weight: 600;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+
+    .stat::after {
+      content: "";
+      position: absolute;
+      right: -36px;
+      top: -36px;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffffff8e, #ffffff00 68%);
+      animation: pulseOrb 3.6s ease-in-out infinite;
+    }
+
+    .stat-label {
+      color: #516487;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: clamp(22px, 5vw, 34px);
+      color: #152645;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .leaders-card {
+      background: var(--card);
+      border: 1px solid #ffffff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .leaders-head {
+      display: grid;
+      grid-template-columns: 78px 1.25fr .95fr;
+      gap: 12px;
+      color: #445981;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 4px 10px 10px;
+      border-bottom: 1px dashed #c8d5ef;
+    }
+
+    .leader-list {
+      margin-top: 6px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .leader-row {
+      display: grid;
+      grid-template-columns: 78px 1.25fr .95fr;
+      gap: 12px;
+      padding: 14px 12px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #ffffffdb, #f5f9ffde);
+      border: 1px solid #ffffff;
+      box-shadow: 0 8px 16px #00195810;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: rowIn .64s cubic-bezier(.19, .78, .17, 1) forwards, rowPulse 6.4s ease-in-out infinite;
+      animation-delay: var(--d, 0ms);
+      will-change: transform, box-shadow;
+      position: relative;
+    }
+
+    .leader-row.me {
+      border-color: #ffc66f;
+      box-shadow: 0 10px 22px #ffad2f33;
+      background: linear-gradient(145deg, #fff8e8, #fff2ce);
+    }
+
+    .leader-row.tier-gold {
+      background: linear-gradient(145deg, #fff7d6, #ffe7a4);
+      border-color: #f8c958;
+      box-shadow: 0 14px 30px #ffbf2f42;
+    }
+
+    .leader-row.tier-silver {
+      background: linear-gradient(145deg, #f4f6fa, #d6dde8);
+      border-color: #a5b2c4;
+      box-shadow: 0 13px 26px #7f8fa744;
+    }
+
+    .leader-row.tier-bronze {
+      background: linear-gradient(145deg, #fff1e8, #f7d8c0);
+      border-color: #dba176;
+      box-shadow: 0 12px 24px #d88a5140;
+    }
+
+    .leader-row::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(115deg, #ffffff00 20%, #ffffff82 50%, #ffffff00 80%);
+      transform: translateX(-130%);
+      animation: rowShine 4.8s linear infinite;
+      pointer-events: none;
+      opacity: 0.55;
+    }
+
+    .leader-rank {
+      font-size: 24px;
+      font-weight: 700;
+      color: #273b5e;
+      text-align: center;
+      letter-spacing: 0.01em;
+    }
+
+    .leader-rank.tier-gold {
+      color: #7c4d05;
+      text-shadow: 0 0 12px #ffcb4e8a;
+      animation: medalPulse 1.9s ease-in-out infinite;
+    }
+
+    .leader-rank.tier-silver {
+      color: #3e4b5c;
+      text-shadow: 0 0 12px #aebacc99;
+      animation: medalPulse 2.2s ease-in-out infinite;
+    }
+
+    .leader-rank.tier-bronze {
+      color: #7b4624;
+      text-shadow: 0 0 10px #df9f7282;
+      animation: medalPulse 2.4s ease-in-out infinite;
+    }
+
+    .leader-name {
+      font-size: 19px;
+      font-weight: 700;
+      color: #16294a;
+      word-break: break-word;
+    }
+
+    .leader-sub {
+      margin-top: 4px;
+      color: #51658f;
+      font-size: 13px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .leader-turnover {
+      text-align: right;
+      font-weight: 700;
+      font-family: "JetBrains Mono", monospace;
+      color: #0b6547;
+      font-size: 21px;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+
+    .foot {
+      text-align: center;
+      font-size: 12px;
+      color: #5f7197;
+      padding-bottom: 8px;
+    }
+
+    .congrats-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    .congrats-overlay.show {
+      display: flex;
+      animation: fadeIn .25s ease-out;
+    }
+
+    .congrats-backdrop {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 22%, #27417985, #070f1dce 68%);
+      backdrop-filter: blur(3px);
+    }
+
+    .congrats-modal {
+      position: relative;
+      width: min(100%, 460px);
+      background: linear-gradient(150deg, #fff9e7, #f6fbff);
+      border: 1px solid #ffffff;
+      border-radius: 22px;
+      box-shadow: 0 24px 56px #0000004f;
+      padding: 16px 14px 14px;
+      text-align: center;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .congrats-modal::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18% 20%, #ffd56f80 0 12%, #ffd56f00 46%),
+        radial-gradient(circle at 82% 16%, #8ec4ff66 0 14%, #8ec4ff00 48%);
+      z-index: -1;
+      animation: hueOrbit 10s ease-in-out infinite;
+    }
+
+    .congrats-title {
+      margin-top: 4px;
+      font-family: "Bebas Neue", "Impact", sans-serif;
+      letter-spacing: .04em;
+      font-size: clamp(34px, 8vw, 46px);
+      color: #1a2746;
+      line-height: .95;
+    }
+
+    .congrats-text {
+      margin-top: 8px;
+      color: #2f4368;
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 600;
+      text-wrap: balance;
+    }
+
+    .congrats-btn {
+      margin-top: 12px;
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 22px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      color: #21345a;
+      background: linear-gradient(145deg, #ffd36b, #ffbb4f);
+      box-shadow: 0 10px 20px #fca21f4f;
+      cursor: pointer;
+      transition: transform .14s ease, box-shadow .14s ease;
+    }
+
+    .congrats-btn:active {
+      transform: translateY(1px) scale(.99);
+      box-shadow: 0 6px 12px #fca21f42;
+    }
+
+    .congrats-fireworks {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .fw-burst {
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+
+    .fw-particle {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--fw-color, #ffd45e);
+      transform: rotate(var(--fw-angle, 0deg)) translateY(0) scale(1);
+      animation: fwBlast var(--fw-time, 1200ms) ease-out forwards;
+      box-shadow: 0 0 12px #ffffffbd;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 900px) {
+      .leaders-card {
+        padding: 12px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 6px 6px 14px;
+        gap: 8px;
+      }
+
+      .hero {
+        padding: 14px 12px;
+        border-radius: 18px;
+      }
+
+      h1 {
+        font-size: clamp(34px, 13.5vw, 52px);
+      }
+
+      .hero-sub {
+        font-size: 13px;
+      }
+
+      .chips {
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .chip {
+        padding: 5px 10px;
+        font-size: 11px;
+      }
+
+      .stat {
+        min-height: 76px;
+        padding: 10px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+      }
+
+      .leaders-head {
+        display: grid;
+        grid-template-columns: 66px 1fr;
+        gap: 8px;
+        font-size: 11px;
+      }
+
+      .leaders-head > :last-child {
+        display: none;
+      }
+
+      .leader-row {
+        grid-template-columns: 66px 1fr;
+        gap: 8px;
+        padding: 12px 9px;
+      }
+
+      .leader-turnover {
+        grid-column: 1 / -1;
+        text-align: left;
+        font-size: 19px;
+        margin-top: 4px;
+      }
+
+      .leader-rank {
+        font-size: 21px;
+      }
+
+      .leader-name {
+        font-size: 17px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .leader-row {
+        padding: 9px 7px;
+        gap: 6px;
+      }
+
+      .leader-name {
+        font-size: 16px;
+      }
+
+      .leader-sub {
+        font-size: 12px;
+      }
+
+      .leader-turnover {
+        font-size: 18px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    @keyframes auroraMove {
+      0% { transform: translate3d(-1%, -2%, 0) scale(1); }
+      100% { transform: translate3d(2%, 1%, 0) scale(1.08); }
+    }
+
+    @keyframes sweep {
+      0% { transform: translateX(-40%); opacity: 0; }
+      30% { opacity: .55; }
+      70% { opacity: .38; }
+      100% { transform: translateX(140%); opacity: 0; }
+    }
+
+    @keyframes revealUp {
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes heroBreath {
+      0%, 100% { transform: translateY(0); box-shadow: var(--shadow); }
+      50% { transform: translateY(-3px); box-shadow: 0 20px 46px #001f5a28; }
+    }
+
+    @keyframes heroGlow {
+      0%, 100% { text-shadow: 0 0 0 #ffb84a00; }
+      50% { text-shadow: 0 0 26px #ffc14950; }
+    }
+
+    @keyframes hueOrbit {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(7deg) scale(1.02); }
+      100% { transform: rotate(-5deg) scale(1); }
+    }
+
+    @keyframes statDrift {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes pulseOrb {
+      0%, 100% { transform: scale(1); opacity: .35; }
+      50% { transform: scale(1.18); opacity: .68; }
+    }
+
+    @keyframes rowIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes rowPulse {
+      0%, 100% { box-shadow: 0 8px 16px #00195810; }
+      50% { box-shadow: 0 11px 22px #0019581d; }
+    }
+
+    @keyframes rowShine {
+      0% { transform: translateX(-135%); }
+      100% { transform: translateX(135%); }
+    }
+
+    @keyframes fwBlast {
+      0% {
+        transform: rotate(var(--fw-angle, 0deg)) translateY(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: rotate(var(--fw-angle, 0deg)) translateY(calc(-1 * var(--fw-dist, 90px))) scale(.24);
+        opacity: 0;
+      }
+    }
+
+    @keyframes medalPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.07); }
+    }
+
+    @keyframes sparkFloat {
+      0% { transform: translateY(110vh) scale(.5); opacity: 0; }
+      10% { opacity: .58; }
+      90% { opacity: .28; }
+      100% { transform: translateY(-18vh) scale(1.1); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="spark-field" id="sparkField"></div>
+
+  <main class="app">
+    <section class="stats reveal" style="animation-delay: 80ms;">
+      <article class="stat">
+        <div class="stat-topline">
+          <span id="chipUpdated">Обновлено: -</span>
+          <span class="stat-pill" id="chipCurrency">GRAM</span>
+        </div>
+        <div class="stat-label">Общий оборот ТОП-10</div>
+        <div class="stat-value" id="statTotal">0</div>
+      </article>
+    </section>
+
+    <section class="leaders-card reveal" style="animation-delay: 150ms;">
+      <div class="leaders-head">
+        <div>Место</div>
+        <div>Игрок</div>
+        <div style="text-align:right;">Оборот</div>
+      </div>
+      <div class="leader-list" id="leaderList"></div>
+    </section>
+
+    <div class="foot">VIRALIX LEADERS · WebApp</div>
+  </main>
+
+  <div class="congrats-overlay" id="congratsOverlay">
+    <div class="congrats-backdrop"></div>
+    <div class="congrats-modal">
+      <div class="congrats-fireworks" id="congratsFireworks"></div>
+      <div class="congrats-title" id="congratsTitle">Поздравляем!</div>
+      <div class="congrats-text" id="congratsText">Вы в топе лидеров.</div>
+      <button class="congrats-btn" id="congratsThanks" type="button">Спасибо</button>
+    </div>
+  </div>
+
+  <script>
+    const medals = ["🥇", "🥈", "🥉"];
+    const demo = {
+      generated_at: new Date().toISOString(),
+      currency: "GRAM",
+      leaders: [
+        { rank: 1, tg_id: 101, name: "@arclight", turnover: 4820000, wins: 514, games: 1012, title: "👑 Оверлорд" },
+        { rank: 2, tg_id: 102, name: "@nova", turnover: 3914000, wins: 443, games: 980, title: "🔱 Эмиссар" },
+        { rank: 3, tg_id: 103, name: "Skylab", turnover: 3141000, wins: 390, games: 902, title: "🧠 Профессионал" },
+        { rank: 4, tg_id: 104, name: "@zen", turnover: 2722000, wins: 322, games: 810, title: "💎 Доминион" },
+        { rank: 5, tg_id: 105, name: "Bolt", turnover: 2219000, wins: 291, games: 788, title: "🥇 Стратег" },
+        { rank: 6, tg_id: 106, name: "@pearl", turnover: 2051000, wins: 266, games: 732, title: "🥉 Тактик" },
+        { rank: 7, tg_id: 107, name: "Orion", turnover: 1895000, wins: 228, games: 709, title: "" },
+        { rank: 8, tg_id: 108, name: "@blaze", turnover: 1743000, wins: 204, games: 672, title: "" },
+        { rank: 9, tg_id: 109, name: "Rook", turnover: 1600000, wins: 188, games: 641, title: "" },
+        { rank: 10, tg_id: 110, name: "Astra", turnover: 1497000, wins: 177, games: 615, title: "" }
+      ]
+    };
+
+    function safeNum(value) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function readPayload() {
+      const params = new URLSearchParams(window.location.search);
+      const raw = params.get("data") || params.get("payload");
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function normalizePayload(src) {
+      const payload = src && typeof src === "object" ? src : {};
+      const leadersInput = Array.isArray(payload.leaders) ? payload.leaders : [];
+      const leaders = leadersInput
+        .map((item, idx) => ({
+          rank: idx + 1,
+          tg_id: safeNum(item && item.tg_id),
+          name: String((item && item.name) || "").trim() || `ID ${safeNum(item && item.tg_id)}`,
+          turnover: Math.max(0, safeNum(item && item.turnover)),
+          wins: Math.max(0, safeNum(item && item.wins)),
+          games: Math.max(0, safeNum(item && item.games)),
+          title: String((item && item.title) || "").trim()
+        }))
+        .sort((a, b) => b.turnover - a.turnover)
+        .slice(0, 10)
+        .map((item, idx) => ({ ...item, rank: idx + 1 }));
+
+      return {
+        generated_at: String(payload.generated_at || new Date().toISOString()),
+        currency: String(payload.currency || "GRAM").trim() || "GRAM",
+        leaders
+      };
+    }
+
+    const fmt = new Intl.NumberFormat("ru-RU");
+
+    function formatDateLabel(iso) {
+      const d = new Date(iso);
+      if (!Number.isFinite(d.getTime())) return "-";
+      return d.toLocaleString("ru-RU", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function animateValue(el, target, suffix, duration = 1200) {
+      const end = Math.max(0, Math.round(safeNum(target)));
+      const start = performance.now();
+      function tick(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const current = Math.round(end * eased);
+        el.textContent = `${fmt.format(current)}${suffix ? ` ${suffix}` : ""}`;
+        if (t < 1) {
+          requestAnimationFrame(tick);
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function makeSparkles() {
+      const field = document.getElementById("sparkField");
+      for (let i = 0; i < 24; i += 1) {
+        const spark = document.createElement("span");
+        spark.className = "spark";
+        const left = Math.random() * 100;
+        const delay = Math.random() * 8;
+        const duration = 6 + Math.random() * 7;
+        spark.style.left = `${left}%`;
+        spark.style.bottom = "-12px";
+        spark.style.animationDelay = `${delay}s`;
+        spark.style.animationDuration = `${duration}s`;
+        spark.style.opacity = (0.2 + Math.random() * 0.5).toFixed(2);
+        field.appendChild(spark);
+      }
+    }
+
+    function rankBadge(rank) {
+      return medals[rank - 1] || `${rank}`;
+    }
+
+    function currentTelegramUserId() {
+      return Number(
+        window.Telegram &&
+        window.Telegram.WebApp &&
+        window.Telegram.WebApp.initDataUnsafe &&
+        window.Telegram.WebApp.initDataUnsafe.user &&
+        window.Telegram.WebApp.initDataUnsafe.user.id
+      ) || 0;
+    }
+
+    function congratsCopy(rank) {
+      if (rank === 1) {
+        return {
+          title: "ТЫ №1!",
+          text: "Фейерверк в твою честь. Ты занял 1 место в таблице лидеров!"
+        };
+      }
+      if (rank === 2) {
+        return {
+          title: "ТОП-2!",
+          text: "Отличный результат. Ты на 2 месте, это мощно!"
+        };
+      }
+      return {
+        title: "ТОП-3!",
+        text: "Красиво! Ты в тройке лидеров. Продолжай в том же темпе!"
+      };
+    }
+
+    function spawnFireworkBurst(container) {
+      const burst = document.createElement("div");
+      burst.className = "fw-burst";
+      burst.style.left = `${8 + Math.random() * 84}%`;
+      burst.style.top = `${8 + Math.random() * 68}%`;
+      const parts = 18 + Math.floor(Math.random() * 10);
+      for (let i = 0; i < parts; i += 1) {
+        const p = document.createElement("span");
+        p.className = "fw-particle";
+        const angle = Math.round((360 / parts) * i + (Math.random() * 14 - 7));
+        p.style.setProperty("--fw-angle", `${angle}deg`);
+        p.style.setProperty("--fw-time", `${900 + Math.round(Math.random() * 900)}ms`);
+        p.style.setProperty("--fw-dist", `${66 + Math.round(Math.random() * 98)}px`);
+        p.style.setProperty("--fw-color", `hsl(${Math.round(Math.random() * 360)} 95% 62%)`);
+        burst.appendChild(p);
+      }
+      container.appendChild(burst);
+      setTimeout(() => burst.remove(), 2300);
+    }
+
+    let congratsFxTimer = null;
+
+    function startCongratsFireworks(container) {
+      if (!container) return;
+      if (congratsFxTimer) {
+        clearInterval(congratsFxTimer);
+        congratsFxTimer = null;
+      }
+      container.innerHTML = "";
+      for (let i = 0; i < 10; i += 1) {
+        setTimeout(() => spawnFireworkBurst(container), i * 130);
+      }
+      congratsFxTimer = setInterval(() => spawnFireworkBurst(container), 320);
+    }
+
+    function stopCongratsFireworks() {
+      if (congratsFxTimer) {
+        clearInterval(congratsFxTimer);
+        congratsFxTimer = null;
+      }
+    }
+
+    function maybeShowCongratsOnce(payload) {
+      const meId = currentTelegramUserId();
+      if (!meId) return;
+      const me = payload.leaders.find((it) => Number(it.tg_id) === meId);
+      if (!me || me.rank < 1 || me.rank > 3) return;
+
+      const storageKey = `viralix_leaders_congrats_v1:${meId}:rank:${me.rank}`;
+      try {
+        if (localStorage.getItem(storageKey) === "1") return;
+      } catch (e) {
+      }
+
+      const overlay = document.getElementById("congratsOverlay");
+      const titleEl = document.getElementById("congratsTitle");
+      const textEl = document.getElementById("congratsText");
+      const thanksBtn = document.getElementById("congratsThanks");
+      const fireworks = document.getElementById("congratsFireworks");
+      if (!overlay || !titleEl || !textEl || !thanksBtn || !fireworks) return;
+
+      const copy = congratsCopy(me.rank);
+      titleEl.textContent = copy.title;
+      textEl.textContent = copy.text;
+      overlay.classList.add("show");
+      startCongratsFireworks(fireworks);
+
+      thanksBtn.onclick = () => {
+        stopCongratsFireworks();
+        overlay.classList.remove("show");
+        try {
+          localStorage.setItem(storageKey, "1");
+        } catch (e) {
+        }
+      };
+    }
+
+    function renderRows(payload) {
+      const list = document.getElementById("leaderList");
+      list.innerHTML = "";
+      const meId = currentTelegramUserId();
+
+      payload.leaders.forEach((item, idx) => {
+        const row = document.createElement("article");
+        row.className = "leader-row";
+        if (item.rank === 1) {
+          row.classList.add("tier-gold");
+        } else if (item.rank === 2) {
+          row.classList.add("tier-silver");
+        } else if (item.rank === 3) {
+          row.classList.add("tier-bronze");
+        }
+        row.style.setProperty("--d", `${120 + idx * 70}ms`);
+        if (meId && meId === item.tg_id) {
+          row.classList.add("me");
+        }
+
+        const rank = document.createElement("div");
+        rank.className = "leader-rank";
+        if (item.rank === 1) {
+          rank.classList.add("tier-gold");
+        } else if (item.rank === 2) {
+          rank.classList.add("tier-silver");
+        } else if (item.rank === 3) {
+          rank.classList.add("tier-bronze");
+        }
+        rank.textContent = rankBadge(item.rank);
+
+        const identity = document.createElement("div");
+        const name = document.createElement("div");
+        name.className = "leader-name";
+        name.textContent = item.name;
+        const sub = document.createElement("div");
+        sub.className = "leader-sub";
+        const titleTag = document.createElement("span");
+        titleTag.textContent = item.title || "Без титула";
+        const gamesTag = document.createElement("span");
+        gamesTag.textContent = `Игр: ${fmt.format(item.games)} · Побед: ${fmt.format(item.wins)}`;
+        sub.appendChild(titleTag);
+        sub.appendChild(gamesTag);
+        identity.appendChild(name);
+        identity.appendChild(sub);
+
+        const turnover = document.createElement("div");
+        turnover.className = "leader-turnover";
+        turnover.textContent = `0 ${payload.currency}`;
+
+        row.appendChild(rank);
+        row.appendChild(identity);
+        row.appendChild(turnover);
+        list.appendChild(row);
+
+        animateValue(turnover, item.turnover, payload.currency, 900 + idx * 110);
+      });
+    }
+
+    function renderStats(payload) {
+      const totalTurnover = payload.leaders.reduce((sum, item) => sum + item.turnover, 0);
+      animateValue(document.getElementById("statTotal"), totalTurnover, "", 1300);
+    }
+
+    function renderMeta(payload) {
+      document.getElementById("chipUpdated").textContent = `Обновлено: ${formatDateLabel(payload.generated_at)}`;
+      document.getElementById("chipCurrency").textContent = payload.currency;
+    }
+
+    function initTelegramWebApp() {
+      const tg = window.Telegram && window.Telegram.WebApp;
+      if (!tg) return;
+      try {
+        tg.ready();
+        tg.expand();
+        if (typeof tg.disableVerticalSwipes === "function") {
+          tg.disableVerticalSwipes();
+        }
+      } catch (e) {
+      }
+    }
+
+    (function boot() {
+      initTelegramWebApp();
+      makeSparkles();
+      const payload = normalizePayload(readPayload() || demo);
+      renderMeta(payload);
+      renderStats(payload);
+      renderRows(payload);
+      maybeShowCongratsOnce(payload);
+    })();
+  </script>
+</body>
+</html>
+
