@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Куб Удачи 3x3</title>
+  <style>
+    :root {
+      --bg-a: #04111f;
+      --bg-b: #0e2236;
+      --panel: rgba(255, 255, 255, 0.08);
+      --card-front-1: #f8fafc;
+      --card-front-2: #e2e8f0;
+      --card-back-1: #0f172a;
+      --card-back-2: #1e293b;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.28);
+      --text: #f1f5f9;
+      --muted: #cbd5e1;
+      --gap: 12px;
+      --move-duration: 750ms;
+      --flip-duration: 720ms;
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: "Segoe UI Variable", "Segoe UI", "Trebuchet MS", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 15%, #1d4ed8 0%, transparent 42%),
+        radial-gradient(circle at 80% 85%, #0ea5e9 0%, transparent 38%),
+        linear-gradient(135deg, var(--bg-a), var(--bg-b));
+      overflow: hidden;
+    }
+
+    .bg-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.15;
+      background-image:
+        linear-gradient(transparent 49%, rgba(255, 255, 255, 0.08) 50%),
+        linear-gradient(90deg, transparent 49%, rgba(255, 255, 255, 0.06) 50%);
+      background-size: 2px 2px, 3px 3px;
+      mix-blend-mode: soft-light;
+    }
+
+    main {
+      position: relative;
+      width: min(94vw, 760px);
+      margin: 0 auto;
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 24px 0;
+    }
+
+    .panel {
+      width: 100%;
+      border-radius: 28px;
+      padding: 26px 24px 22px;
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.24),
+        0 18px 60px rgba(0, 0, 0, 0.32);
+      backdrop-filter: blur(9px);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .title-wrap h1 {
+      margin: 0;
+      font-size: clamp(1.3rem, 2.3vw, 2rem);
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .title-wrap p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .stage-wrap {
+      position: relative;
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.12));
+    }
+
+    .stage {
+      position: relative;
+      width: min(86vw, 520px);
+      margin: 0 auto;
+      aspect-ratio: 1 / 1;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.58), rgba(2, 6, 23, 0.85));
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .card {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform-style: preserve-3d;
+      transition: transform var(--move-duration) cubic-bezier(0.28, 0.8, 0.28, 1);
+      cursor: default;
+      user-select: none;
+    }
+
+    .card.selectable {
+      cursor: pointer;
+    }
+
+    .card.selectable:not(.is-flipped):hover .card-inner {
+      transform: rotateY(0deg) translateY(-2px);
+      box-shadow: 0 14px 26px rgba(0, 0, 0, 0.34);
+    }
+
+    .card.is-flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: var(--radius);
+      transform-style: preserve-3d;
+      transition: transform var(--flip-duration) cubic-bezier(0.2, 0.85, 0.28, 1);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      font-weight: 800;
+    }
+
+    .card-front {
+      color: #0f172a;
+      background: linear-gradient(145deg, var(--card-front-1), var(--card-front-2));
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      font-size: clamp(1.2rem, 4.1vw, 2rem);
+      letter-spacing: 0.02em;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      color: #f0fdf4;
+      background: linear-gradient(150deg, var(--card-back-1), var(--card-back-2));
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-size: clamp(1.25rem, 4.2vw, 2rem);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .status-bar {
+      margin-top: 16px;
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+    }
+
+    .status {
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      min-height: 1.4em;
+      text-align: center;
+    }
+
+    .status.pulse {
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    .status.error-blink {
+      animation: unpaid-blink 300ms ease-in-out 5;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; text-shadow: 0 0 0 transparent; }
+      50% { opacity: 0.82; text-shadow: 0 0 18px var(--accent-soft); }
+      100% { opacity: 1; text-shadow: 0 0 0 transparent; }
+    }
+
+    @keyframes unpaid-blink {
+      0%, 100% {
+        opacity: 1;
+        color: #fecaca;
+        text-shadow: 0 0 0 rgba(239, 68, 68, 0);
+      }
+      50% {
+        opacity: 0.22;
+        color: #ef4444;
+        text-shadow: 0 0 18px rgba(239, 68, 68, 0.78);
+      }
+    }
+
+    .action-btn {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 12;
+      width: min(82vw, 380px);
+      min-height: clamp(74px, 11vh, 100px);
+      transform: translate(-50%, -50%);
+      border: none;
+      border-radius: 999px;
+      padding: 18px 24px;
+      font-size: clamp(1.22rem, 3.2vw, 1.95rem);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #04110c;
+      background: linear-gradient(140deg, #d9f99d, #4ade80 46%, #22c55e);
+      box-shadow:
+        0 20px 42px rgba(34, 197, 94, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      transition: transform 240ms ease, filter 240ms ease, opacity 220ms ease;
+    }
+
+    .action-btn:hover {
+      transform: translate(-50%, -53%) scale(1.01);
+      filter: brightness(1.08);
+    }
+
+    .action-btn:disabled {
+      opacity: 0;
+      pointer-events: none;
+      cursor: default;
+      transform: translate(-50%, -45%) scale(0.95);
+      filter: none;
+    }
+
+    .result-overlay {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(1, 7, 19, 0.74);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 320ms ease;
+    }
+
+    .result-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #fireworks {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .result-panel {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 24px 22px;
+      width: min(92vw, 660px);
+    }
+
+    .result-sub {
+      margin: 0;
+      font-size: clamp(1rem, 2.1vw, 1.25rem);
+      color: #ecfeff;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .result-value {
+      margin: 8px 0 14px;
+      font-size: clamp(2.2rem, 8.4vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: 0.03em;
+      color: #22c55e;
+      text-shadow:
+        0 0 20px rgba(34, 197, 94, 0.6),
+        0 0 70px rgba(34, 197, 94, 0.24);
+    }
+
+    .result-bot {
+      margin: 0 0 16px;
+      font-size: clamp(0.95rem, 1.9vw, 1.08rem);
+      color: #d1fae5;
+      letter-spacing: 0.01em;
+    }
+
+    .result-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .result-btn {
+      border: none;
+      border-radius: 14px;
+      padding: 11px 18px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+      background: linear-gradient(130deg, #bbf7d0, #4ade80);
+      cursor: pointer;
+      box-shadow: 0 14px 32px rgba(34, 197, 94, 0.3);
+    }
+
+    .result-btn-secondary {
+      color: #dbeafe;
+      background: linear-gradient(130deg, #1e293b, #334155);
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.38);
+    }
+
+    .result-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .pay-confirm {
+      margin-top: 14px;
+      padding: 14px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(187, 247, 208, 0.35);
+      background: rgba(6, 18, 31, 0.78);
+    }
+
+    .pay-title {
+      margin: 0 0 10px;
+      font-size: clamp(0.95rem, 1.9vw, 1.06rem);
+      color: #bbf7d0;
+    }
+
+    .pay-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pay-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 9px 14px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .pay-btn-yes {
+      color: #052e16;
+      background: linear-gradient(130deg, #86efac, #22c55e);
+    }
+
+    .pay-btn-no {
+      color: #fee2e2;
+      background: linear-gradient(130deg, #7f1d1d, #991b1b);
+    }
+
+    @media (max-width: 640px) {
+      :root {
+        --gap: 8px;
+        --radius: 16px;
+      }
+
+      .panel {
+        padding: 18px 14px 16px;
+        border-radius: 20px;
+      }
+
+      .header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grain"></div>
+
+  <main>
+    <section class="panel">
+      <div class="header">
+        <div class="title-wrap">
+          <h1>Куб Удачи 3x3</h1>
+          <p>Запомни значения, дождись перемешивания и выбери один кубик.</p>
+        </div>
+      </div>
+
+      <div class="stage-wrap">
+        <div class="stage" id="stage"></div>
+        <button class="action-btn" id="startBtn" type="button">START</button>
+      </div>
+
+      <div class="status-bar">
+        <div class="status" id="statusText">Нажми «Старт», чтобы запустить раунд.</div>
+      </div>
+    </section>
+  </main>
+
+  <div class="result-overlay" id="resultOverlay" aria-hidden="true">
+    <canvas id="fireworks"></canvas>
+    <div class="result-panel">
+      <p class="result-sub">Твой приз</p>
+      <p class="result-value" id="resultValue">0 GRAM</p>
+      <p class="result-bot" id="resultHint">Бот отправит красивое сообщение с кнопкой приза</p>
+      <div class="result-actions">
+        <button class="result-btn" id="claimPrizeBtn" type="button">Получить приз</button>
+        <button class="result-btn result-btn-secondary" id="playAgainBtn" type="button">Играть ещё раз</button>
+      </div>
+      <div class="pay-confirm" id="payConfirm" hidden>
+        <p class="pay-title" id="payTitle">Заплатить ещё 10 000 GRAM за новый раунд?</p>
+        <div class="pay-actions">
+          <button class="pay-btn pay-btn-yes" id="payYesBtn" type="button">Да, оплатить</button>
+          <button class="pay-btn pay-btn-no" id="payNoBtn" type="button">Нет</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const VALUES = ["2K", "7K", "3K", "1K", "15K", "17K", "8K", "1K", "3K"];
+    const FIREWORK_SPEED_FACTOR = 0.85;
+
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = Number.parseInt(params.get("sid") || "", 10) || 0;
+    const roundPrice = Number.parseInt(params.get("price") || "", 10) || 10000;
+    const forcedPayoutGram = Number.parseInt(params.get("payout") || "", 10) || 0;
+    const currency = String(params.get("currency") || "GRAM").toUpperCase();
+
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    if (tg) {
+      try {
+        tg.ready();
+        tg.expand();
+      } catch (_) {
+        // ignore
+      }
+    }
+
+    const stage = document.getElementById("stage");
+    const statusText = document.getElementById("statusText");
+    const startBtn = document.getElementById("startBtn");
+    const resultOverlay = document.getElementById("resultOverlay");
+    const resultValue = document.getElementById("resultValue");
+    const resultHint = document.getElementById("resultHint");
+    const claimPrizeBtn = document.getElementById("claimPrizeBtn");
+    const playAgainBtn = document.getElementById("playAgainBtn");
+    const payConfirm = document.getElementById("payConfirm");
+    const payTitle = document.getElementById("payTitle");
+    const payYesBtn = document.getElementById("payYesBtn");
+    const payNoBtn = document.getElementById("payNoBtn");
+
+    const fireworksCanvas = document.getElementById("fireworks");
+    const fwCtx = fireworksCanvas.getContext("2d");
+
+    let cards = [];
+    let positions = [];
+    let gameState = "idle";
+    let runningRound = null;
+
+    let fwActive = false;
+    let particles = [];
+    let fwLast = 0;
+    let burstTicker = 0;
+    let animationId = null;
+
+    let pickedCardId = -1;
+    let pickedPrizeGram = 0;
+    let resultSent = false;
+    let statusBlinkTimer = null;
+
+    function formatInt(value) {
+      return new Intl.NumberFormat("ru-RU").format(Math.max(0, Number.parseInt(value || 0, 10) || 0));
+    }
+
+    function formatPrize(value) {
+      return `${formatInt(value)} ${currency}`;
+    }
+
+    function toGramInt(valueText) {
+      const numeric = Number.parseInt(String(valueText || "").replace("K", ""), 10);
+      return Number.isFinite(numeric) ? numeric * 1000 : 0;
+    }
+
+    function shuffleArray(source) {
+      const arr = [...source];
+      for (let i = arr.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    function setStatus(text, pulse = false) {
+      statusText.textContent = text;
+      statusText.classList.remove("error-blink");
+      statusText.classList.toggle("pulse", pulse);
+      if (statusBlinkTimer) {
+        clearTimeout(statusBlinkTimer);
+        statusBlinkTimer = null;
+      }
+    }
+
+    function flashUnpaidStatus(text) {
+      setStatus(text, false);
+      statusText.classList.remove("error-blink");
+      void statusText.offsetWidth;
+      statusText.classList.add("error-blink");
+      statusBlinkTimer = setTimeout(() => {
+        statusText.classList.remove("error-blink");
+        statusBlinkTimer = null;
+      }, 1500);
+    }
+
+    function setupBoard() {
+      cards = [];
+      stage.innerHTML = "";
+
+      const values = shuffleArray(VALUES);
+      for (let i = 0; i < 9; i += 1) {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.id = String(i);
+        card.dataset.value = values[i];
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back">${values[i]}</div>
+          </div>
+        `;
+        card.slot = i;
+        card.addEventListener("click", () => onCardClick(card));
+        stage.appendChild(card);
+        cards.push(card);
+      }
+
+      layoutCards(true);
+      setCardsSelectable(false);
+    }
+
+    function getGeometry() {
+      const stageSize = stage.clientWidth;
+      const gap = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--gap"));
+      const cell = (stageSize - gap * 4) / 3;
+      const start = gap;
+
+      const coords = [];
+      for (let row = 0; row < 3; row += 1) {
+        for (let col = 0; col < 3; col += 1) {
+          coords.push({
+            x: start + col * (cell + gap),
+            y: start + row * (cell + gap),
+            size: cell
+          });
+        }
+      }
+      return coords;
+    }
+
+    function layoutCards(immediate = false) {
+      positions = getGeometry();
+      cards.forEach((card) => {
+        const pos = positions[card.slot];
+        if (!pos) return;
+
+        if (immediate) {
+          const prev = card.style.transition;
+          card.style.transition = "none";
+          card.style.width = `${pos.size}px`;
+          card.style.height = `${pos.size}px`;
+          card.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+          card.offsetHeight;
+          card.style.transition = prev || "";
+          return;
+        }
+
+        card.style.width = `${pos.size}px`;
+        card.style.height = `${pos.size}px`;
+        card.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+      });
+    }
+
+    function setCardsSelectable(on) {
+      cards.forEach((card) => {
+        card.classList.toggle("selectable", on);
+      });
+    }
+
+    function flipAll(isFlipped) {
+      cards.forEach((card) => {
+        card.classList.toggle("is-flipped", isFlipped);
+      });
+    }
+
+    function randomReposition() {
+      const slots = shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8]);
+      cards.forEach((card, idx) => {
+        card.slot = slots[idx];
+      });
+      layoutCards();
+    }
+
+    async function runShufflePhase(steps, moveDuration, pauseAfter) {
+      document.documentElement.style.setProperty("--move-duration", `${moveDuration}ms`);
+      for (let i = 0; i < steps; i += 1) {
+        randomReposition();
+        await sleep(moveDuration + pauseAfter);
+      }
+    }
+
+    async function runRound() {
+      gameState = "preview";
+      setStatus("Запоминай значения...", true);
+      flipAll(true);
+      await sleep(3000);
+
+      flipAll(false);
+      setStatus("Готовься к перемешиванию...");
+      await sleep(850);
+
+      gameState = "shuffle";
+      setStatus("Кубики перемешиваются...", true);
+
+      await runShufflePhase(4, 980, 110);
+      await runShufflePhase(7, 420, 55);
+      await runShufflePhase(4, 780, 80);
+      await runShufflePhase(10, 260, 30);
+
+      gameState = "pick";
+      setCardsSelectable(true);
+      setStatus("Выбирай!", true);
+    }
+
+    function onCardClick(card) {
+      if (gameState !== "pick") return;
+
+      gameState = "result";
+      setCardsSelectable(false);
+      setStatus("Смотрим результат...");
+      card.classList.add("is-flipped");
+
+      pickedCardId = Number.parseInt(card.dataset.id || "-1", 10);
+      const localPrize = toGramInt(card.dataset.value);
+      pickedPrizeGram = forcedPayoutGram > 0 ? forcedPayoutGram : localPrize;
+
+      setTimeout(() => {
+        showResult(formatPrize(pickedPrizeGram));
+      }, 820);
+    }
+
+    function resetResultControls() {
+      resultSent = false;
+      claimPrizeBtn.disabled = false;
+      playAgainBtn.disabled = false;
+      payYesBtn.disabled = false;
+      payNoBtn.disabled = false;
+      payConfirm.hidden = true;
+    }
+
+    function startGame() {
+      if (runningRound) return;
+      if (sessionId <= 0) {
+        flashUnpaidStatus(`Сессия не оплачена. Оплатите ${formatInt(roundPrice)} ${currency} в боте.`);
+        return;
+      }
+
+      stopFireworks();
+      resultOverlay.classList.remove("show");
+      resultOverlay.setAttribute("aria-hidden", "true");
+      resetResultControls();
+      pickedCardId = -1;
+      pickedPrizeGram = 0;
+
+      startBtn.disabled = true;
+      setStatus("Подготовка поля...");
+      setupBoard();
+
+      runningRound = runRound()
+        .catch(() => {
+          setStatus("Ошибка раунда. Нажми START снова.");
+          gameState = "idle";
+        })
+        .finally(() => {
+          runningRound = null;
+          if (gameState === "pick") {
+            startBtn.disabled = true;
+          } else if (gameState !== "result") {
+            startBtn.disabled = false;
+          }
+        });
+    }
+
+    function showResult(value) {
+      resultValue.textContent = value;
+      resultHint.textContent = "После отправки результата бот пришлет кнопку «Получить приз».";
+      resultOverlay.classList.add("show");
+      resultOverlay.setAttribute("aria-hidden", "false");
+      startFireworks();
+      startBtn.disabled = false;
+    }
+
+    function resizeFireworksCanvas() {
+      fireworksCanvas.width = window.innerWidth * window.devicePixelRatio;
+      fireworksCanvas.height = window.innerHeight * window.devicePixelRatio;
+      fireworksCanvas.style.width = `${window.innerWidth}px`;
+      fireworksCanvas.style.height = `${window.innerHeight}px`;
+      fwCtx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    }
+
+    function spawnBurst(x, y) {
+      const colorSet = ["#22c55e", "#4ade80", "#86efac", "#bbf7d0", "#facc15"];
+      const count = 48 + Math.floor(Math.random() * 28);
+      for (let i = 0; i < count; i += 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1.4 + Math.random() * 5.2;
+        particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 60 + Math.random() * 40,
+          radius: 1.6 + Math.random() * 2.6,
+          color: colorSet[Math.floor(Math.random() * colorSet.length)]
+        });
+      }
+    }
+
+    function fireworkFrame(ts) {
+      if (!fwActive) return;
+      const prev = fwLast || ts;
+      const elapsedMs = ts - prev;
+      const delta = (elapsedMs / 16.67) * FIREWORK_SPEED_FACTOR;
+      fwLast = ts;
+
+      fwCtx.fillStyle = "rgba(2, 6, 23, 0.18)";
+      fwCtx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+      burstTicker += elapsedMs * FIREWORK_SPEED_FACTOR;
+      if (burstTicker > 220) {
+        burstTicker = 0;
+        const x = 90 + Math.random() * (window.innerWidth - 180);
+        const y = 80 + Math.random() * (window.innerHeight * 0.5);
+        spawnBurst(x, y);
+      }
+
+      for (let i = particles.length - 1; i >= 0; i -= 1) {
+        const p = particles[i];
+        p.x += p.vx * delta;
+        p.y += p.vy * delta;
+        p.vy += 0.06 * delta;
+        p.life -= 1.2 * delta;
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        fwCtx.globalAlpha = Math.max(0, p.life / 100);
+        fwCtx.fillStyle = p.color;
+        fwCtx.beginPath();
+        fwCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        fwCtx.fill();
+      }
+      fwCtx.globalAlpha = 1;
+
+      animationId = requestAnimationFrame(fireworkFrame);
+    }
+
+    function startFireworks() {
+      resizeFireworksCanvas();
+      particles = [];
+      fwLast = 0;
+      burstTicker = 0;
+      fwActive = true;
+
+      for (let i = 0; i < 3; i += 1) {
+        const x = 120 + Math.random() * (window.innerWidth - 240);
+        const y = 110 + Math.random() * (window.innerHeight * 0.45);
+        spawnBurst(x, y);
+      }
+      animationId = requestAnimationFrame(fireworkFrame);
+    }
+
+    function stopFireworks() {
+      fwActive = false;
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+      animationId = null;
+      particles = [];
+      fwCtx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+    }
+
+    function lockAndCloseGame() {
+      if (tg && typeof tg.close === "function") {
+        tg.close();
+        return;
+      }
+      try {
+        window.close();
+      } catch (_) {
+        // ignore
+      }
+      gameState = "idle";
+      setCardsSelectable(false);
+      startBtn.disabled = true;
+      setStatus(`Без оплаты ${formatInt(roundPrice)} ${currency} новый раунд недоступен.`, false);
+    }
+
+    function sendResultToBot(action) {
+      if (resultSent) return;
+      if (sessionId <= 0) {
+        setStatus("Нет оплаченной сессии. Открой игру из бота.", false);
+        return;
+      }
+      if (!(tg && typeof tg.sendData === "function")) {
+        setStatus("Открой игру через Telegram, чтобы отправить результат.", false);
+        return;
+      }
+
+      const payload = {
+        event: "cube_round_result",
+        action,
+        session_id: sessionId,
+        price: roundPrice,
+        payout_gram: pickedPrizeGram,
+        card_id: pickedCardId,
+        currency,
+        ts: Date.now()
+      };
+
+      try {
+        resultSent = true;
+        claimPrizeBtn.disabled = true;
+        playAgainBtn.disabled = true;
+        payYesBtn.disabled = true;
+        payNoBtn.disabled = true;
+        tg.sendData(JSON.stringify(payload));
+      } catch (_) {
+        resultSent = false;
+        claimPrizeBtn.disabled = false;
+        playAgainBtn.disabled = false;
+        payYesBtn.disabled = false;
+        payNoBtn.disabled = false;
+        setStatus("Не удалось отправить результат. Повтори действие.", false);
+      }
+    }
+
+    startBtn.addEventListener("click", startGame);
+    claimPrizeBtn.addEventListener("click", () => {
+      setStatus("Отправляем результат в бота...", true);
+      sendResultToBot("claim");
+    });
+
+    playAgainBtn.addEventListener("click", () => {
+      payConfirm.hidden = false;
+      setStatus(`Подтверди оплату ещё ${formatInt(roundPrice)} ${currency}.`, false);
+    });
+
+    payYesBtn.addEventListener("click", () => {
+      setStatus("Оплата нового раунда отправляется в бота...", true);
+      sendResultToBot("replay_yes");
+    });
+
+    payNoBtn.addEventListener("click", () => {
+      lockAndCloseGame();
+    });
+
+    window.addEventListener("resize", () => {
+      layoutCards(true);
+      if (fwActive) {
+        resizeFireworksCanvas();
+      }
+    });
+
+    payTitle.textContent = `Заплатить ещё ${formatInt(roundPrice)} ${currency} за новый раунд?`;
+    if (sessionId > 0) {
+      setStatus(`Сессия #${sessionId} оплачена. Цена игры: ${formatInt(roundPrice)} ${currency}.`, false);
+    } else {
+      setStatus(`Сессия не оплачена. Открой игру из бота и оплати ${formatInt(roundPrice)} ${currency}.`, false);
+    }
+    setupBoard();
+  </script>
+</body>
+</html>
